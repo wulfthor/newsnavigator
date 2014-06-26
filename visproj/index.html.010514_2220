@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>D3 Test</title>
+<script type="text/javascript" src="d3/d3.v3.js"></script>
+<link rel="stylesheet" href="vis.css">
+</head>
+<body>
+<div class="bar">
+</div>
+<script type="text/javascript">
+var dataset = [ 5, 10, 15, 20, 25 ];
+//d3.select("body").selectAll("p").data(dataset).enter().append("p").text("NEs par");
+//d3.select("body").selectAll("div").data(dataset).enter().append("div").attr("class","bar");text(function(d) {return "vi har " + d;}).style("color", "red");
+d3.select("body")
+.selectAll("div")
+.data(dataset)
+.enter()
+.append("div")
+.attr("class","bar")
+.style("height", function(d) {
+		return d + "px";
+		});
+</script>
+</body>
+</html>

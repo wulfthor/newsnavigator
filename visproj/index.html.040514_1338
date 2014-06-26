@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <link rel="stylesheet" href="bower_components/jquery-vertical-timeline/dist/jquery-vertical-timeline.min.css">
+  </head>
+  <body>
+    <script type="text/javascript" src="d3/d3.v3.js"></script>
+    <script src="jq/jquery-1.6.2.min.js"></script>
+    <script type="text/javascript" src="bower_components/jquery-vertical-timeline/dist/jquery-vertical-timeline.libs.js"></script>
+    <script type="text/javascript" src="bower_components/jquery-vertical-timeline/dist/jquery-vertical-timeline.js"></script>
+
+    <div class="timeline-jquery-example">
+    </div>
+
+    <script type="text/javascript">
+      $(function(){
+          $.getJSON('data.json', function(data) {
+            $('.timeline-jquery-example').verticalTimeline({
+    data:data
+});
+            });
+          });
+</script>
+<p>test</p>
+          </body>
+        </html>

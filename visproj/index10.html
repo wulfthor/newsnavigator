@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body>
+  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
+  <script>
+
+    d3.json("stories.json", function(error, data) {
+      var svg = d3.select("body").append("svg")
+      .attr("width", 100)
+      .attr("height", 400);
+
+      svg.selectAll("circle")
+      .data(data)
+      .enter()
+      .append("circle")
+      .attr("cx",function(d) {
+        //return d.wordcount;
+        return 25;
+      })
+      .attr("cy",function(d) {
+        return 20;
+      })
+      .attr("r",function(d) {
+        //return d.wordcount;
+        return 12;
+      });
+    });
+
+  </script>
+</body>

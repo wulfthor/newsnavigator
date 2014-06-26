@@ -1,0 +1,135 @@
+/*
+ * Simple timeline of latest earthquakes in the US
+ * Built using the D3 library by Mike Bostock
+ * http://mbostock.github.com/d3/
+ *
+ * Real-time source data from USGS via Bitdeli (updated hourly)
+ * https://bitdeli.com/scripts/82/usgs-earthquakes-as-geojson-features
+ *
+ * (c) 2012 Bitdeli Inc.
+ * Freely distributable under the MIT license.
+ */
+
+// Bitdeli API URL
+// Only the latest 24 groups (24 hours) of earthquakes are used here
+var SCRIPT_ID = "s-04ba0f7ec9c885-f52ac599", // Bitdeli script ID
+    GROUPS_URL = "https://out.bitdeli.com/v1/data/"+SCRIPT_ID+"/groups?max=24&offset=0";
+
+// Data is stored in this array
+var data = [];
+
+// Load source data sequentially from the Bitdeli output API
+// (range queries for output groups aren't currently supported)
+// https://bitdeli.com/docs/api#output-api
+$.getJSON(GROUPS_URL, function(json) {
+    var groups = json.groups, groupCounter = 0;
+    getGroup(groupCounter);
+
+    function getGroup(index) {
+        if (index < groups.length) {
+            // Get individual group from Bitdeli
+            $.getJSON(groups[index].href, function(json) {
+                // Append data from this group to the data array
+                data = data.concat(_(json.items).pluck("object"));
+                // Get next group
+                groupCounter++;
+                getGroup(groupCounter);
+            });
+        } else {
+            // When all groups are loaded, render timeline
+            renderTimeline();
+        }
+    }
+});
+
+// Initialize timeline
+// See also:
+// http://mbostock.github.com/d3/tutorial/bar-2.html
+// http://mbostock.github.com/d3/ex/population.html
+function renderTimeline() {
+    // Width and height for bars and chart
+    var w = 10,
+        h = 300,
+        cW = w * data.length - 1,
+        cH = h;
+
+    // Horizontal scale
+    var timestamps = data.map(function(d) {
+            return new Date(d.properties.timestamp);
+        }),
+        x = d3.time.scale()
+        .domain(d3.extent(timestamps))
+        .range([0, cW]);
+
+    // Vertical scale
+    var maxMagnitude = d3.max(data, function(d) {
+            return d.properties.magnitude;
+        }),
+        y = d3.scale.linear()
+        .domain([0, maxMagnitude])
+        .rangeRound([0, h]);
+
+    // Chart element
+    var chart = d3.select("body").append("svg")
+        .attr("class", "chart")
+        .attr("width", cW)
+        .attr("height", cH);
+
+    // Join data to bars
+    var rect = chart.selectAll("rect")
+        .data(data, function(d) { return d.id; });
+
+    // Insert bar elements
+    rect.enter().insert("rect")
+        .attr("x", function(d, i) { return x(timestamps[i]); })
+        .attr("y", function(d) { return h - y(d.properties.magnitude); })
+        .attr("width", w)
+        .attr("height", function(d) { return y(d.properties.magnitude); });
+
+    // Add rules to mark magnitude values
+    var rules = chart.append("g");
+    rules = rules.selectAll(".rule")
+        .data(y.ticks(5))
+      .enter().append("g")
+        .attr("class", "rule")
+        .attr("transform", function(d) { return "translate(0,"+(h-y(d))+")"; });
+
+    // Add rule lines
+    rules.append("line")
+        .attr("x2", cW);
+
+    // Add rule labels
+    rules.append("text")
+        .attr("x", 0)
+        .attr("dy", ".35em")
+        .text(function(d) { return d; });
+
+    // Add the x axis
+    chart.append("line")
+        .attr("x1", 0)
+        .attr("x2", cW)
+        .attr("y1", h - .5)
+        .attr("y2", h - .5)
+        .style("stroke", "#000");
+
+    // Add time ticks to x axis
+    var tickH = 18,
+        times = chart.append("g");
+    times = times.selectAll(".time")
+        .data(x.ticks(d3.time.hours, 6))
+      .enter().append("g")
+        .attr("class", "time")
+        .attr("transform", function(d) {
+            return "translate("+x(d)+","+(h-tickH)+")";
+        });
+
+    // Add time tick line
+    times.append("line")
+        .attr("y2", tickH)
+
+    // Add time tick label
+    times.append("text")
+        .attr("x", 3)
+        .attr("dy", "1em")
+        .text(x.tickFormat("%I %p"));
+}

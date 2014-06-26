@@ -1,0 +1,1 @@
+curl http://content.guardianapis.com/search?q=marius\&show-fields=all\&show-tags=all\&show-factboxes=all\&show-elements=all\&show-references=all\&show-refinements=all\&show-snippets=all\&api\-key=mediahackdays2014

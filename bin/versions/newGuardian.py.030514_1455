@@ -1,0 +1,158 @@
+#!/usr/bin/python
+
+# -*- encoding: utf-8 -*-
+from __future__ import unicode_literals
+import requests
+import urllib2
+import json
+import re
+import sys, getopt
+from requests_oauthlib import OAuth1
+from urlparse import parse_qs
+from pymongo import MongoClient
+
+# Connection to Mongo DB
+try:
+    client=MongoClient('192.168.10.31', 27017)
+    print "Connected successfully!!!"
+except pymongo.errors.ConnectionFailure, e:
+   print "Could not connect to MongoDB: %s" % e 
+
+db = client.harvest
+stories = db.stories
+key = "mediahackdays2014"
+# open file
+
+# insert story
+
+
+
+def main():
+
+        count=20
+        method="searcht"
+        optionstr=""
+        filelocation="/tmp/test.txt"
+        test=0
+        lang="da"
+        data={}
+
+        try:
+          opts, args = getopt.getopt(sys.argv[1:],"s:g:h:m:c:ta:f:")
+          for o, a in opts:
+            if o == "-s":
+              searchstring = urllib2.quote(a.encode('utf8'))
+            elif o == "-g":
+              fromdate = a
+              optionstr=optionstr+"&from-date="+fromdate
+            elif o == "-h":
+              todate = a
+              optionstr=optionstr+"&to-date="+todate
+            elif o == "-m":
+              method = a
+            elif o == "-c":
+              count = a
+              optionstr=optionstr+"&page-size="+count
+            elif o == "-t":
+              test = 1
+            elif o == "-f":
+              filelocation = a
+            elif o == "-l":
+              lang = a
+            else:
+              assert False, "unhandled option"
+
+        except getopt.GetoptError as err:
+          print(err)
+          sys.exit(2)
+
+
+        baseurl="http://content.guardianapis.com/search?q=" + searchstring + optionstr
+        endurl="&show-fields=all&show-tags=all&show-factboxes=all&show-elements=all&show-references=all&show-snippets=all&api-key=mediahackdays2014"
+        # http://content.guardianapis.com/search?q=cameron&tag=type%2Farticle&show-tags=all&api-key=mediahackdays2014
+        url=baseurl+endurl
+
+        print url
+        r = requests.get(url=url)
+        #print json.dumps(input, sort_keys = False, indent = 4)
+        #print json.dumps(r,sort_keys = False, indent = 4)
+        newdata = json.loads(r.text)
+        #wanted = {u'id',u'webTitle',u'newspaperPageNumber'}
+        #[i for i in newdata[u'response'] if any(w in newdata for w in i[u'results'])]
+
+        if test:
+          with open(filelocation,"w") as fh:
+            json.dumps(r.text,fh)
+          #print json.dumps(newdata, sort_keys=True, indent=4)
+          #print "------------------"
+          #print newdata
+          count=0
+          #print len(newdata)
+        if method == "timeline":
+          for row in newdata:
+            #print (newdata[count]['text'].encode('utf8'))
+            fh.write(newdata[count]['text'])
+            #fh.write(str(newdata[count]['text'].encode('utf8')))
+            #fh.write(str(newdata[count]['text'].encode('utf8')))
+            #fh.write("\n")
+        elif method == "searcht":
+          for k in newdata['response']['results']:
+
+            tmpID=k['id'].encode('utf8')
+            myID=tmpID.replace('/','@')
+            try:
+              res=stories.findOne({'_id':"myID"})
+              print "Try " + res
+            except:
+              print "ups on " + myID
+              #continue
+
+            data['_id']=tmpID.replace('/','@')
+            print "ID:" + k['id'].encode('utf8') + myID
+
+            print "TRAIL:" + k['fields']['trailText']
+            myTrail=k['fields']['trailText']
+            data['Trail']=myTrail
+
+            print "WebTitle:" + k['fields']['webTitle']
+            myWebTitle=k['fields']['webTitle']
+            data['webTitle']=myWebTitle
+
+            print "headline:" + k['fields']['headline']
+            myheadline=k['fields']['headline']
+            data['headline']=myheadline
+
+            print "byline:" + k['fields']['byline']
+            mybyline=k['fields']['byline']
+            data['byline']=mybyline
+
+            #print "BODY:" + k['fields']['body']
+            myBody=k['fields']['body']
+            data['Body']=myBody
+
+  
+            try:
+              print "PAGENO:" + k['fields']['newspaperPageNumber']
+              myPageNo=k['fields']['newspaperPageNumber']
+              data['newspaperPageNumber']=myPageNo
+            except:
+              print "ups on newpaper .."
+              continue
+
+            try:
+              print "DATE:" + k['fields']['newspaperEditionDate']
+              myDate=k['fields']['newspaperEditionDate']
+              data['newspaperEditionDate']=myDate
+            except:
+              print "ups on eddate .."
+              continue
+
+            stories.insert(data)
+            #stories.update(data, upsert=True)
+
+
+
+if __name__ == "__main__":
+  main()
+  #r = requests.get(url="https://api.twitter.com/1.1/statuses/mentions_timeline.json", auth=oauth)
+  #r = requests.get(url="https://api.twitter.com/1.1/search/tweets.json?q=%23freebandnames&since_id=24012619984051000&max_id=250126199840518145&result_type=mixed&count=4", auth=oauth)

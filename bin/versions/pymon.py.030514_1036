@@ -1,0 +1,12 @@
+ #!/usr/bin/python
+
+from pymongo import MongoClient
+
+# Connection to Mongo DB
+try:
+    client=MongoClient('192.168.10.31', 27017)
+    print "Connected successfully!!!"
+except pymongo.errors.ConnectionFailure, e:
+   print "Could not connect to MongoDB: %s" % e 
+
+db = client.school

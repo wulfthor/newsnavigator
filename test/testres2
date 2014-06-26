@@ -1,0 +1,89 @@
+{
+    "pagination": {
+        "items": 3, 
+        "page": 1, 
+        "pages": 1, 
+        "per_page": 50, 
+        "urls": {}
+    }, 
+    "results": [
+        {
+            "catno": "9220065", 
+            "country": "Europe", 
+            "format": [
+                "VHS"
+            ], 
+            "genre": [
+                "Non-Music", 
+                "Pop"
+            ], 
+            "id": 27208, 
+            "label": [
+                "Jive", 
+                "Zomba Video"
+            ], 
+            "resource_url": "http://api.discogs.com/masters/27208", 
+            "style": [
+                "Interview"
+            ], 
+            "thumb": "http://api.discogs.com/image/R-90-663426-1144952605.jpeg", 
+            "title": "Britney Spears - Time Out With Britney Spears", 
+            "type": "master", 
+            "uri": "/Britney-Spears-Time-Out-With-Britney-Spears/master/27208", 
+            "year": "1999"
+        }, 
+        {
+            "catno": "none", 
+            "country": "", 
+            "format": [
+                "CD", 
+                "Maxi-Single", 
+                "Promo"
+            ], 
+            "genre": [
+                "Electronic", 
+                "Pop"
+            ], 
+            "id": 27084, 
+            "label": [
+                "Jive"
+            ], 
+            "resource_url": "http://api.discogs.com/masters/27084", 
+            "style": [
+                "House", 
+                "Europop"
+            ], 
+            "thumb": "http://api.discogs.com/image/R-90-4059579-1353873949-7206.jpeg", 
+            "title": "Britney Spears - (You Drive Me) Crazy", 
+            "type": "master", 
+            "uri": "/Britney-Spears-You-Drive-Me-Crazy/master/27084", 
+            "year": "1999"
+        }, 
+        {
+            "barcode": [
+                "8 86976 23422 5", 
+                "886976234225"
+            ], 
+            "catno": "88697 62342 2", 
+            "country": "UK", 
+            "format": [
+                "CD", 
+                "Compilation"
+            ], 
+            "genre": [
+                "Pop"
+            ], 
+            "id": 203074, 
+            "label": [
+                "Jive", 
+                "Sony Music"
+            ], 
+            "resource_url": "http://api.discogs.com/masters/203074", 
+            "thumb": "http://api.discogs.com/image/R-90-2029929-1378151514-8347.jpeg", 
+            "title": "Britney Spears - The Singles Collection", 
+            "type": "master", 
+            "uri": "/Britney-Spears-The-Singles-Collection/master/203074", 
+            "year": "2009"
+        }
+    ]
+}
