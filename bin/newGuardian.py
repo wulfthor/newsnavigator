@@ -14,17 +14,20 @@ from requests_oauthlib import OAuth1
 from urlparse import parse_qs
 from pymongo import MongoClient
 
-# Connection to Mongo DB
-try:
-    client=MongoClient('192.168.10.31', 27017)
-    print "Connected successfully!!!"
-except pymongo.errors.ConnectionFailure, e:
-   print "Could not connect to MongoDB: %s" % e 
+#prerequisite
 
+mongoserver = "192.168.10.31"
 db = client.harvest
 stories = db.stories
 key = "5332f3mgcz7kh8hfxdctehgh"
 starturl="http://beta.content.guardianapis.com"
+# Connection to Mongo DB
+try:
+    client=MongoClient(mongoserver, 27017)
+    print "Connected successfully!!!"
+except pymongo.errors.ConnectionFailure, e:
+   print "Could not connect to MongoDB: %s" % e 
+
 # open file
 
 # insert story
